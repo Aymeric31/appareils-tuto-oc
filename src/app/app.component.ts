@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AppareilService } from './services/appareil.service';
-import { resolve } from 'q';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,8 @@ import { resolve } from 'q';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  secondes: number;
+  counterSubscription: Subscription;
   isAuth = false;
   lastUpdate = new Promise((resolve, reject) => {
     const date = new Date();
@@ -28,6 +32,18 @@ export class AppComponent implements OnInit {
   }
   ngOnInit() {
     this.appareils = this.appareilService.appareils;
+    const counter = Observable.interval(1000);
+    counter.subscribe(
+      (value) => {
+        this.secondes = value;
+      },
+      (error) => {
+        console.log('Uh-oh, an error occured! : ' + error);
+      },
+      () => {
+        console.log('Observable complete!');
+      }
+    )
   }
   onAllumer() {
     this.appareilService.switchOnAll();
@@ -41,4 +57,9 @@ export class AppComponent implements OnInit {
       return null
     }
   }
+
+  ngOnDestroy() {
+    this.counterSubscription.unsubscribe();
+  }
+
 }
