@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppareilService {
   isAuth: boolean;
-  appareils = [
+
+  appareilsSubject = new Subject<any[]>();
+
+  private appareils = [
     {
       id: 1,
       name: 'Machine à laver',
@@ -29,6 +33,9 @@ export class AppareilService {
       }, 4000
     );
   }
+  emitAppareilSubject() {
+    this.appareilsSubject.next(this.appareils.slice());
+  }
   getAppareilById(id: number) {
     const appareil = this.appareils.find(
       (s) => {
@@ -37,25 +44,40 @@ export class AppareilService {
     );
     return appareil;
   }
+
   switchOnOne(index: number) {
     this.appareils[index].status = 'allumé';
+    this.emitAppareilSubject();
   }
 
   switchOffOne(index: number) {
     this.appareils[index].status = 'éteint';
+    this.emitAppareilSubject();
   }
 
   switchOnAll() {
     for (let appareil of this.appareils) {
       appareil.status = 'allumé';
-      console.log("ok");
-
+      this.emitAppareilSubject();
     }
   }
 
   switchOffAll() {
     for (let appareil of this.appareils) {
       appareil.status = 'éteint';
+      this.emitAppareilSubject();
     }
+  }
+  addAppareil(name: string, status: string) {
+    const appareilObject = {
+      id: 0,
+      name: '',
+      status: ''
+    };
+    appareilObject.name = name;
+    appareilObject.status = status;
+    appareilObject.id = this.appareils[(this.appareils.length - 1)].id + 1;
+    this.appareils.push(appareilObject);
+    this.emitAppareilSubject();
   }
 }

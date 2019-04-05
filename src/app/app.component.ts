@@ -31,7 +31,6 @@ export class AppComponent implements OnInit {
     );
   }
   ngOnInit() {
-    this.appareils = this.appareilService.appareils;
     const counter = Observable.interval(1000);
     counter.subscribe(
       (value) => {

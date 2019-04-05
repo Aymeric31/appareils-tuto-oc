@@ -22,7 +22,7 @@ export class AuthComponent implements OnInit {
         this.authStatus = this.authService.isAuth;
         this.router.navigate(['appareils']);
       }
-    )
+    );
   }
   onSignOut() {
     this.authService.signOut();
